@@ -212,7 +212,7 @@ class AutoMate extends HTMLElement {
    */
   safe(text) {
     if (!text) {
-      return null;
+      return '';
     }
     const map = {
       "&": "&amp;",
