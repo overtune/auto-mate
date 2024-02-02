@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Auto mate web component demo</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body {
+        margin: 0;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+      }
+      .form label {
+        display: block;
+      }
+    </style>
+  </head>
+
+  <body>
+    <p>Test by setting the `selector` field to ".testform" to test the form below,<br/>
+      or "#lazyform" to test the form that is lazy loaded (after 5s)</p>
+    <form class="testform form">
+      <label for="firstname">Firstname</label>
+      <input type="text" id="firstname" name="firstname" />
+      <label for="lastname">Lastname</label>
+      <input type="text" id="lastname" name="lastname" />
+      <label for="personno">Person number</label>
+      <input type="text" id="personno" name="personno" />
+      <label for="email">E-mail</label>
+      <input type="text" id="email" name="email" />
+      <label for="phone">Phone</label>
+      <input type="text" id="phone" name="phone" />
+      <label for="address">Address</label>
+      <input type="text" id="address" name="address" />
+      <label for="zip">Zip</label>
+      <input type="text" id="zip" name="zip" />
+      <label for="city">City</label>
+      <input type="text" id="city" name="city" />
+      <label for="terms">Approve terms <input type="checkbox" id="terms" name="terms" /></label>
+      <button type="submit">Send</button>
+    </form>
+    <script src="./init.js" type="module"></script>
+    <script src="./lazy-load-test.js"></script>
+  </body>
+</html>
