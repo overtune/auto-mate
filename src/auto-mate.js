@@ -211,6 +211,9 @@ class AutoMate extends HTMLElement {
    * @param {string} text - the text to be escaped.
    */
   safe(text) {
+    if (!text) {
+      return null;
+    }
     const map = {
       "&": "&amp;",
       "<": "&lt;",
