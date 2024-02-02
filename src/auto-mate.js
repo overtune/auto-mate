@@ -202,7 +202,14 @@ class AutoMate extends HTMLElement {
     });
 
     if (this.autosubmit && !this.autorun) {
-      this.targetForm.submit();
+      if (this.targetForm.submit) {
+        this.targetForm.submit();
+      } else {
+        const submitBtn = this.targetForm.querySelector('[type="submit"]');
+        if (submitBtn) {
+          submitBtn.click();
+        }
+      }
     }
   }
 
