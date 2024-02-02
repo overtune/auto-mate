@@ -238,6 +238,7 @@ class AutoMate extends HTMLElement {
           background-color: white;
           padding: 1rem;
           box-shadow: rgba(0, 0, 0, 0.15) 0px 3px 3px 0px;
+          z-index: 10000;
         }
         *, *:before, *:after {
           box-sizing: inherit;
