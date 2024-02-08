@@ -173,31 +173,26 @@ class AutoMate extends HTMLElement {
    */
   fillForm() {
     this.targetForm.querySelectorAll("input").forEach((input) => {
-      if (input.type === "checkbox") {
-        input.checked = true;
-        return;
-      }
-
       const name = input.name.toLowerCase();
 
       // Email
       if (/mail/.test(name)) {
-        input.value = this.valueEmail;
+        this.enterValue(input, this.valueEmail);
         // Person number
       } else if (
         /person/.test(name) &&
         (/no/.test(name) || /number/.test(name))
       ) {
-        input.value = this.valuePersonNumber;
+        this.enterValue(input, this.valuePersonNumber);
         // Phone
       } else if (/phone/.test(name)) {
-        input.value = this.valuePhone;
+        this.enterValue(input, this.valuePhone);
         // Zip
       } else if (/zip/.test(name)) {
-        input.value = this.valueZip;
+        this.enterValue(input, this.valueZip);
         // Default
       } else {
-        input.value = this.valueDefault;
+        this.enterValue(input, this.valueDefault);
       }
     });
 
@@ -214,12 +209,46 @@ class AutoMate extends HTMLElement {
   }
 
   /**
+   * Enters a value on an input.
+   */
+  enterValue(input, value) {
+    console.log(input)
+    if (input.type === "checkbox") {
+      console.log('WE HAVE A CHECKBOX', input)
+      const event = new MouseEvent("click", {
+        view: window,
+        bubbles: true,
+        cancelable: false,
+      });
+      input.dispatchEvent(event);
+    } else {
+      const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+        window.HTMLInputElement.prototype,
+        "value",
+      ).set;
+      nativeInputValueSetter.call(input, value);
+      const event = new Event("input", { bubbles: true });
+      input.dispatchEvent(event);
+    }
+
+    // For selects?
+    // @see: https://stackoverflow.com/a/61741796
+    /*var trigger = Object.getOwnPropertyDescriptor(
+      window.HTMLSelectElement.prototype,
+      "value",
+    ).set;
+    trigger.call(element, 4); // 4 is the select option's value we want to set
+    var event = new Event("change", { bubbles: true });
+    element.dispatchEvent(event);*/
+  }
+
+  /**
    * Escapes string for use in template literals.
    * @param {string} text - the text to be escaped.
    */
   safe(text) {
     if (!text) {
-      return '';
+      return "";
     }
     const map = {
       "&": "&amp;",
@@ -273,23 +302,21 @@ class AutoMate extends HTMLElement {
           <div class="field">
             <label for="selector">Selector</label>
             <input id="selector" name="selector" type="text" value="${this.safe(
-              this.selector,
-            )}" autocomplete="off" />
+      this.selector,
+    )}" autocomplete="off" />
           </div>
           
           <div class="field">
             <label for="autosubmit">
-              <input id="autosubmit" name="autosubmit" type="checkbox" value="yes" ${
-                this.autosubmit && 'checked="checked"'
-              } /> Auto submit
+              <input id="autosubmit" name="autosubmit" type="checkbox" value="yes" ${this.autosubmit && 'checked="checked"'
+      } /> Auto submit
             </label>
           </div>
           
           <div class="field">
             <label for="autorun">
-              <input id="autorun" name="autorun" type="checkbox" value="yes" ${
-                this.autorun && 'checked="checked"'
-              } /> Auto run
+              <input id="autorun" name="autorun" type="checkbox" value="yes" ${this.autorun && 'checked="checked"'
+      } /> Auto run
             </label>
           </div>
           

@@ -4,7 +4,7 @@
   "description": "Web component to help automate form fills.",
   "main": "index.js",
 	"scripts": {
-		"start": "live-server src",
+		"start": "live-server src --cors",
 		"lint": "eslint src",
 		"lint:fix": "eslint src --fix",
 		"typecheck": "tsc"
