@@ -1,6 +1,6 @@
 {
   "name": "auto-mate",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Web component to help automate form fills.",
   "main": "index.js",
 	"scripts": {
