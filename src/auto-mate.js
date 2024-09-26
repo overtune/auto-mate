@@ -23,6 +23,9 @@ class AutoMate extends HTMLElement {
   get selector() {
     return localStorage.getItem("AutoMate-selector");
   }
+  get ignoredFields() {
+    return localStorage.getItem("AutoMate-ignored-fields");
+  }
   get autosubmit() {
     return localStorage.getItem("AutoMate-autosubmit") === "yes";
   }
@@ -31,6 +34,16 @@ class AutoMate extends HTMLElement {
   }
   get targetForm() {
     return document.querySelector(this.selector);
+  }
+  get ignoredFieldsArray() {
+    return (
+      this.ignoredFields
+        .split(",")
+        .filter((s) => s)
+        .map((selector) => {
+          return document.querySelector(selector);
+        }) || []
+    );
   }
   get valueDefault() {
     return "Test";
@@ -44,6 +57,12 @@ class AutoMate extends HTMLElement {
   get valueZip() {
     return "12345";
   }
+  get valueCost() {
+    return "25000";
+  }
+  get valueNumber() {
+    return "2";
+  }
   get valuePersonNumber() {
     return "980419-2137";
   }
@@ -56,6 +75,9 @@ class AutoMate extends HTMLElement {
    */
   set selector(value) {
     localStorage.setItem("AutoMate-selector", value);
+  }
+  set ignoredFields(value) {
+    localStorage.setItem("AutoMate-ignored-fields", value);
   }
   set autosubmit(value) {
     localStorage.setItem("AutoMate-autosubmit", value);
@@ -116,6 +138,7 @@ class AutoMate extends HTMLElement {
     e.preventDefault();
     const formData = new FormData(this.form);
     this.selector = formData.get("selector");
+    this.ignoredFields = formData.get("ignore");
     this.autosubmit = formData.get("autosubmit");
     this.autorun = formData.get("autorun");
 
@@ -173,6 +196,9 @@ class AutoMate extends HTMLElement {
    */
   fillForm() {
     this.targetForm.querySelectorAll("input").forEach((input) => {
+      if (this.ignoredFieldsArray.includes(input)) {
+        return;
+      }
       const name = input.name.toLowerCase();
 
       // Email
@@ -184,15 +210,37 @@ class AutoMate extends HTMLElement {
         (/no/.test(name) || /number/.test(name))
       ) {
         this.enterValue(input, this.valuePersonNumber);
+        // Person number 2
+      } else if (/civic/.test(name)) {
+        this.enterValue(input, this.valuePersonNumber);
         // Phone
       } else if (/phone/.test(name)) {
         this.enterValue(input, this.valuePhone);
         // Zip
       } else if (/zip/.test(name)) {
         this.enterValue(input, this.valueZip);
+        // Cost
+      } else if (
+        /cost/.test(name) ||
+        /income/.test(name) ||
+        /loan/.test(name) ||
+        /amount/.test(name)
+      ) {
+        this.enterValue(input, this.valueCost);
+        // Number
+      } else if (/number/.test(name)) {
+        this.enterValue(input, this.valueNumber);
         // Default
       } else {
         this.enterValue(input, this.valueDefault);
+      }
+    });
+
+    this.targetForm.querySelectorAll("select").forEach((select) => {
+      console.log(select.options.length);
+      if (select.options.length > 1) {
+        select.value = select.options[1].value;
+        select.dispatchEvent(new Event("change"));
       }
     });
 
@@ -212,9 +260,7 @@ class AutoMate extends HTMLElement {
    * Enters a value on an input.
    */
   enterValue(input, value) {
-    console.log(input)
     if (input.type === "checkbox") {
-      console.log('WE HAVE A CHECKBOX', input)
       const event = new MouseEvent("click", {
         view: window,
         bubbles: true,
@@ -233,13 +279,13 @@ class AutoMate extends HTMLElement {
 
     // For selects?
     // @see: https://stackoverflow.com/a/61741796
-    /*var trigger = Object.getOwnPropertyDescriptor(
-      window.HTMLSelectElement.prototype,
-      "value",
-    ).set;
-    trigger.call(element, 4); // 4 is the select option's value we want to set
-    var event = new Event("change", { bubbles: true });
-    element.dispatchEvent(event);*/
+    // var trigger = Object.getOwnPropertyDescriptor(
+    //   window.HTMLSelectElement.prototype,
+    //   "value",
+    // ).set;
+    // trigger.call(element, 4); // 4 is the select option's value we want to set
+    // var event = new Event("change", { bubbles: true });
+    // element.dispatchEvent(event);
   }
 
   /**
@@ -303,6 +349,13 @@ class AutoMate extends HTMLElement {
             <label for="selector">Selector</label>
             <input id="selector" name="selector" type="text" value="${this.safe(
       this.selector,
+    )}" autocomplete="off" />
+          </div>
+          
+          <div class="field">
+            <label for="ignore">Ignored fields</label>
+            <input id="ignore" name="ignore" type="text" value="${this.safe(
+      this.ignoredFields,
     )}" autocomplete="off" />
           </div>
           
