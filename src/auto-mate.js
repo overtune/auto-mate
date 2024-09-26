@@ -70,7 +70,7 @@ class AutoMate extends HTMLElement {
     return "980419-2137";
   }
   get valuePersonNumberLong() {
-    return "19980419-2137";
+    return "199804192137";
   }
 
   /**
