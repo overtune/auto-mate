@@ -60,6 +60,9 @@ class AutoMate extends HTMLElement {
   get valueCost() {
     return "25000";
   }
+  get valueAccountNumber() {
+    return "94204172385";
+  }
   get valueNumber() {
     return "2";
   }
@@ -151,7 +154,7 @@ class AutoMate extends HTMLElement {
    * On click callback.
    */
   onClick() {
-    this.fillForm();
+    this.triggerFillForm();
   }
 
   /**
@@ -159,10 +162,10 @@ class AutoMate extends HTMLElement {
    */
   observeForm() {
     if (this.targetForm) {
-      this.fillForm();
+      this.triggerFillForm();
     } else {
       this.waitForElm(this.selector).then((elm) => {
-        this.fillForm();
+        this.triggerFillForm();
       });
     }
   }
@@ -192,6 +195,17 @@ class AutoMate extends HTMLElement {
   }
 
   /**
+   * Triggers the fill form method
+   * It is runned twice because sometimes changes to inputs can display new inputs.
+   */
+  triggerFillForm() {
+    this.fillForm();
+    setTimeout(() => {
+      this.fillForm();
+    }, 50);
+  }
+
+  /**
    * Fills the form with default values.
    */
   fillForm() {
@@ -212,7 +226,7 @@ class AutoMate extends HTMLElement {
         this.enterValue(input, this.valuePersonNumber);
         // Person number 2
       } else if (/civic/.test(name)) {
-        this.enterValue(input, this.valuePersonNumber);
+        this.enterValue(input, this.valuePersonNumberLong);
         // Phone
       } else if (/phone/.test(name)) {
         this.enterValue(input, this.valuePhone);
@@ -224,9 +238,14 @@ class AutoMate extends HTMLElement {
         /cost/.test(name) ||
         /income/.test(name) ||
         /loan/.test(name) ||
-        /amount/.test(name)
+        /debt/.test(name) ||
+        /amount/.test(name) ||
+        /salary/.test(name)
       ) {
         this.enterValue(input, this.valueCost);
+        // Account number
+      } else if (/accountnum/.test(name)) {
+        this.enterValue(input, this.valueAccountNumber);
         // Number
       } else if (/number/.test(name)) {
         this.enterValue(input, this.valueNumber);
@@ -237,11 +256,7 @@ class AutoMate extends HTMLElement {
     });
 
     this.targetForm.querySelectorAll("select").forEach((select) => {
-      console.log(select.options.length);
-      if (select.options.length > 1) {
-        select.value = select.options[1].value;
-        select.dispatchEvent(new Event("change"));
-      }
+      this.enterSelectValue(select);
     });
 
     if (this.autosubmit && !this.autorun) {
@@ -261,12 +276,14 @@ class AutoMate extends HTMLElement {
    */
   enterValue(input, value) {
     if (input.type === "checkbox") {
-      const event = new MouseEvent("click", {
-        view: window,
-        bubbles: true,
-        cancelable: false,
-      });
-      input.dispatchEvent(event);
+      if (!input.checked) {
+        const event = new MouseEvent("click", {
+          view: window,
+          bubbles: true,
+          cancelable: false,
+        });
+        input.dispatchEvent(event);
+      }
     } else {
       const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
         window.HTMLInputElement.prototype,
@@ -278,14 +295,27 @@ class AutoMate extends HTMLElement {
     }
 
     // For selects?
-    // @see: https://stackoverflow.com/a/61741796
-    // var trigger = Object.getOwnPropertyDescriptor(
-    //   window.HTMLSelectElement.prototype,
-    //   "value",
-    // ).set;
-    // trigger.call(element, 4); // 4 is the select option's value we want to set
-    // var event = new Event("change", { bubbles: true });
-    // element.dispatchEvent(event);
+  }
+
+  /**
+   * Enters a value on an select.
+   * @see: https://stackoverflow.com/a/61741796
+   */
+  enterSelectValue(select) {
+    let value;
+    if (select.options.length > 1) {
+      value = select.options[1].value;
+    } else {
+      value = select.options[0].value;
+    }
+
+    var trigger = Object.getOwnPropertyDescriptor(
+      window.HTMLSelectElement.prototype,
+      "value",
+    ).set;
+    trigger.call(select, value);
+    var event = new Event("change", { bubbles: true });
+    select.dispatchEvent(event);
   }
 
   /**
