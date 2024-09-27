@@ -45,6 +45,9 @@ class AutoMate extends HTMLElement {
         }) || []
     );
   }
+  get locale() {
+    return document.documentElement.getAttribute("lang") || "sv-se";
+  }
   get valueDefault() {
     return "Test";
   }
@@ -70,7 +73,16 @@ class AutoMate extends HTMLElement {
     return "980419-2137";
   }
   get valuePersonNumberLong() {
+    if (this.locale === "fi-fi") {
+      return "200554-329F";
+    }
     return "199804192137";
+  }
+  get valueIban() {
+    if (this.locale === "fi-fi") {
+      return "FI8163353645429646";
+    }
+    return "SE2559486463999239916169";
   }
 
   /**
@@ -227,6 +239,9 @@ class AutoMate extends HTMLElement {
         // Person number 2
       } else if (/civic/.test(name)) {
         this.enterValue(input, this.valuePersonNumberLong);
+        // Iban
+      } else if (/iban/.test(name)) {
+        this.enterValue(input, this.valueIban);
         // Phone
       } else if (/phone/.test(name)) {
         this.enterValue(input, this.valuePhone);
