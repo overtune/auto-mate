@@ -36,14 +36,14 @@ class AutoMate extends HTMLElement {
     return document.querySelector(this.selector);
   }
   get ignoredFieldsArray() {
-    return (
-      this.ignoredFields
-        .split(",")
-        .filter((s) => s)
-        .map((selector) => {
-          return document.querySelector(selector);
-        }) || []
-    );
+    let arr = [];
+    this.ignoredFields
+      .split(",")
+      .filter((s) => s)
+      .forEach((selector) => {
+        arr = [...arr, ...document.querySelectorAll(selector)];
+      });
+    return arr;
   }
   get locale() {
     return document.documentElement.getAttribute("lang") || "sv-se";
@@ -271,6 +271,9 @@ class AutoMate extends HTMLElement {
     });
 
     this.targetForm.querySelectorAll("select").forEach((select) => {
+      if (this.ignoredFieldsArray.includes(select)) {
+        return;
+      }
       this.enterSelectValue(select);
     });
 
