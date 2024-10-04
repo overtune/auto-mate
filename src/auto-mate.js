@@ -397,14 +397,14 @@ class AutoMate extends HTMLElement {
             <label for="selector">Selector</label>
             <input id="selector" name="selector" type="text" value="${this.safe(
       this.selector,
-    )}" autocomplete="off" />
+    )}" autocomplete="off" placeholder="CSS selector for the form" />
           </div>
           
           <div class="field">
             <label for="ignore">Ignored fields</label>
             <input id="ignore" name="ignore" type="text" value="${this.safe(
       this.ignoredFields,
-    )}" autocomplete="off" />
+    )}" autocomplete="off" placeholder="CSS selector for fields to ignore" />
           </div>
           
           <div class="field">

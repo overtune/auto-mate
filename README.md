@@ -27,3 +27,14 @@ Just import the init script on a page and it will take care of the rest.
 ```html
 <script src="https://cdn.jsdelivr.net/gh/overtune/auto-mate@v1.5.0/src/init.js" type="module"></script>
 ```
+
+### Inject to site
+
+You can inject the script on any website by using the console in the browser devtools.  
+Paste and runt the following code:
+```js 
+const scriptEl = document.createElement('script');
+scriptEl.src = "https://cdn.jsdelivr.net/gh/overtune/auto-mate@v1.5.0/src/init.js";
+scriptEl.type = "module";
+document.body.appendChild(scriptEl);
+```
